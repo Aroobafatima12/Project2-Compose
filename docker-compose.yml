@@ -1,26 +1,26 @@
-  version: '3'
+  version: '3' #specify the version of docker
   services:
-    jenkins:
-      image: jenkins/jenkins:lts
-      container_name: jenkins
-      privileged: true
+    jenkins:  #define the jenkins service
+      image: jenkins/jenkins:lts  #Use the long term support version of jenkins
+      container_name: jenkins #Set container name to jenkins
+      privileged: true   #Allow container to run with elevated priviliges
       ports:
-        - "8080:8080"
-        - "50000:50000"
+        - "8080:8080"    #Map port 8080 on the host to port 8080 on jenkins container
+        - "50000:50000"    #Map port 50000 for jenkins agent to connect
       volumes:
-        - /var/run/docker.sock:/var/run/docker.sock
-        - jenkins_home:/var/jenkins_home
+        - /var/run/docker.sock:/var/run/docker.sock   #Bind mount the Docker socket to allow Jenkins to communicate
+        - jenkins_home:/var/jenkins_home      #Create a named volume 'jenkins_home' to persist Jenkins data
       environment:
-        - JENKINS_OPTS=--prefix=/jenkins
-        - JAVA_OPTS= Djenkins.install.runSetupWizard=false
+        - JENKINS_OPTS=--prefix=/jenkins   # Set Jenkins URL prefix
+        - JAVA_OPTS= Djenkins.install.runSetupWizard=false  #Disable the jenkins setup wizard to avoid manual configuartion
       depends_on:
         - dind
 
 
-  dind:
-    image: docker:20-dind
-    container_name: dind
-    privileged: true 
+  dind: #Define the docker-in-docker service
+    image: docker:20-dind    #Use the docker-in-docker image (version 20)
+    container_name: dind   #Set the container name to 'dind'
+    privileged: true   # Allow the container to run with elevated privileges
     environment:
       DOCKER_TLS_CERTDIR: ""
     volumes:
